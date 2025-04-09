@@ -1,0 +1,32 @@
+name: Publish gem_activity_tracker to RubyGems
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  #  v0.1.0, v0.1.1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Build the gem
+        run: gem build gem_activity_tracker.gemspec
+
+      - name: Publish to RubyGems
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: gem push gem_activity_tracker-*.gem
