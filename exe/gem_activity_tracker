@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "gem_activity_tracker"
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: gem_activity_tracker [options]"
+
+  opts.on("-tPATH", "--track=PATH", "Track a Rails/Ruby project") do |path|
+    options[:track] = path
+  end
+
+  opts.on("-r", "--report", "Show last generated report") do
+    options[:report] = true
+  end
+
+  opts.on("-eFORMAT", "--export=FORMAT", "Export as json or csv") do |format|
+    options[:export] = format.to_sym
+  end
+
+  opts.on("-w", "--watch", "Start the file watcher") do
+    options[:watch] = true
+  end
+end.parse!
+
+if options[:track]
+  GemActivityTracker::Tracker.track(options[:track])
+elsif options[:report]
+  GemActivityTracker::Tracker.report
+elsif options[:export]
+  GemActivityTracker::Tracker.export(Dir.pwd, options[:export])
+elsif options[:watch]
+  GemActivityTracker::Watcher.start(Dir.pwd)
+else
+  puts "❗ Please use --track, --report, --export=json|csv, or --watch"
+end
