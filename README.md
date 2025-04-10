@@ -1,39 +1,25 @@
-# 🚀 GemActivityTracker
+# 📊 Gem Activity Tracker
 
-**GemActivityTracker** is a Ruby gem that automatically tracks the structure and changes in your Ruby on Rails project. It collects details like models, controllers, jobs, mailers, services, migrations, schema, routes, and Git history. It also provides real-time file change tracking with a detailed activity log and supports exporting the report as JSON or CSV.
-
----
-
-## 🔍 What Does This Gem Do?
-
-When you include this gem in your Rails project, it will:
-
-- ✅ Scan and record project components:
-  - Models, Controllers, Jobs, Mailers, Services
-  - Migrations, Routes, Schema hash
-  - Database type and Git history
-- 🔁 Automatically detect changes after initialization
-- 🕵️ Keep an activity log of every file change (created, modified, removed)
-- 📊 Export report in:
-  - YAML (default)
-  - JSON
-  - CSV
-- 🔁 Real-time file watcher using the `listen` gem
+**`gem_activity_tracker`** is a Ruby gem that tracks the internal structure, changes, and metadata of your **Ruby** or **Rails** projects. It generates a complete project activity report in **YAML**, with support for **JSON/CSV export**, **auto-tracking with file watcher**, and **Git log visualization**.
 
 ---
 
-## 🔧 Compatibility
+## 🚀 Features
 
-- ✅ **Ruby**: >= 2.6.5 and < 4.0
-- ✅ **Rails**: >= 5.2 and <= 7.1
-
-- ✅ Works with: **MySQL**, **PostgreSQL**, **SQLite**
+- 🔍 Analyze project structure: models, controllers, jobs, services, mailers, routes, etc.
+- 🧠 Advanced model analysis: attributes, associations, methods, validations, callbacks, and enums.
+- 🏗️ Migration tracking and schema hashing.
+- 🛠️ Detect database type from `database.yml`.
+- 📦 Git history tracking (last 20 commits).
+- 🔄 Auto-tracking using the `listen` gem on file changes.
+- 📁 Export report to **YAML**, **JSON**, or **CSV**.
+- ✅ Works with both **Rails** and **plain Ruby** projects.
 
 ---
 
 ## 📦 Installation
 
-Add this line to your Rails application's Gemfile:
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'gem_activity_tracker'
@@ -45,7 +31,7 @@ Then run:
 bundle install
 ```
 
-Or install it manually:
+Or install it directly:
 
 ```bash
 gem install gem_activity_tracker
@@ -53,138 +39,141 @@ gem install gem_activity_tracker
 
 ---
 
-## 🚀 Basic Usage
+## ⚙️ Usage
 
-Once installed, you can use the CLI commands:
-
-### 1. 📌 Generate Activity Report
+### 📌 Basic CLI Commands
 
 ```bash
-gem_activity_tracker --track=.
+gem_activity_tracker --track=PATH          # Track a Ruby/Rails project and generate report
+gem_activity_tracker --report              # Show last generated report
+gem_activity_tracker --export=json         # Export report to JSON
+gem_activity_tracker --export=csv          # Export report to CSV
+gem_activity_tracker --watch               # Start file watcher to auto-track changes
 ```
 
-It will generate a `report.yml` in the `activity_tracker/` folder.
+### 🛠️ Rails Auto-Tracking
+
+In a Rails app, the gem automatically hooks into the app after initialization via a Railtie.
+
+Set this in your `.env` or shell:
+
+```bash
+export GEM_ACTIVITY_TRACKER_ENABLED=true
+```
+
+Then start your Rails app and the gem will:
+
+- Detect and track changes
+- Update `activity_tracker/report.yml`
+- Start watching the file system
 
 ---
 
-### 2. 👁 Start Watching for File Changes
+## 📂 Output
+
+The gem creates an `activity_tracker/` folder at your project root:
+
+```bash
+activity_tracker/
+├── report.yml        # Main YAML report
+├── report.json       # (Optional) Exported JSON
+├── report.csv        # (Optional) Exported CSV
+└── log.txt           # File change logs (when watch mode is on)
+```
+
+---
+
+## 📊 What’s Tracked?
+
+| Component   | Details                                                                 |
+|------------|-------------------------------------------------------------------------|
+| Models      | Count, files, attributes, associations, methods, validations, enums     |
+| Controllers | List of files                                                           |
+| Services    | List of files                                                           |
+| Mailers     | List of files                                                           |
+| Jobs        | List of files                                                           |
+| Migrations  | Count and recent migration names                                        |
+| Routes      | Full route listing via `rails routes`                                   |
+| Schema      | Schema hash (`db/schema.rb`)                                            |
+| Git Log     | Last 20 commits                                                         |
+| Database    | Type detected from `config/database.yml`                                |
+
+---
+
+## 🔁 Auto-Watcher
+
+Auto-track changes in real-time using the `listen` gem:
 
 ```bash
 gem_activity_tracker --watch
 ```
 
-This will keep watching the project. On any file change (model, controller, migration, etc.), it will:
+You'll see logs like:
 
-- Update the report
-- Add a new entry to `log.txt`
+```
+[2025-04-10 12:00:00] Modified: app/models/user.rb
+[2025-04-10 12:00:01] Added: app/services/new_service.rb
+```
+
+Each change triggers regeneration of the report.
 
 ---
 
-### 3. 📄 View Last Generated Report
+## 🧪 Example Output (YAML)
 
-```bash
-gem_activity_tracker --report
-```
-
----
-
-### 4. 📤 Export Report as JSON
-
-```bash
-gem_activity_tracker --export=json
-```
-
----
-
-### 5. 📤 Export Report as CSV
-
-```bash
-gem_activity_tracker --export=csv
-```
-
----
-
-## 📁 Output Structure
-
-The following directory is automatically created:
-
-```
-activity_tracker/
-├── report.yml       # Main YAML report
-├── report.json      # (Optional) JSON export
-├── report.csv       # (Optional) CSV export
-└── log.txt          # Activity logs of file changes
+```yaml
+ruby_version: ruby 3.2.2
+rails_version: 6.1.4
+database: postgresql
+models:
+  count: 5
+  files:
+    - app/models/user.rb
+    - app/models/post.rb
+  detailed:
+    User:
+      table_name: users
+      attributes: [id, name, email]
+      associations:
+        has_many: [posts]
+      validations: ["PresenceValidator"]
+      callbacks: [before_create, after_save]
+controllers:
+  count: 3
+  files: [...]
+git_log:
+  - "1a2b3c4 - Atul Yadav (2025-04-10): Add model tracker"
+  - ...
 ```
 
 ---
 
-## 🧪 Development
+## 💡 Configuration
 
-For contributing or testing locally:
-
-```bash
-git clone https://github.com/atul13055/gem_activity_tracker.git
-cd gem_activity_tracker
-bundle install
-```
-
-Run interactive Ruby console:
+You can toggle auto-tracking with an ENV variable:
 
 ```bash
-bin/console
-```
-
-Build the gem locally:
-
-```bash
-bundle exec rake install
+export GEM_ACTIVITY_TRACKER_ENABLED=false  # disables auto-tracking
 ```
 
 ---
 
-## 🚀 Releasing New Version
+## 🧑 Author
 
-1. Update version in `lib/gem_activity_tracker/version.rb`
-2. Build and release:
-
-```bash
-bundle exec rake release
-```
-
-This will:
-
-- Create a `.gem` file
-- Push to RubyGems
-- Tag and push to GitHub
-
----
-
-## 🤝 Contributing
-
-1. Fork this repo
-2. Create a new branch: `git checkout -b my-feature`
-3. Make your changes
-4. Commit: `git commit -m "Add my feature"`
-5. Push: `git push origin my-feature`
-6. Open a Pull Request
+**Atul Yadav**  
+📧 atuIyadav9039@gmail.com  
+📍 Indore, India  
+🔗 [LinkedIn](https://www.linkedin.com/in/atul-yadav-9445ab1a4)  
+📦 RubyGems: [gem_activity_tracker](https://rubygems.org/gems/gem_activity_tracker)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License. See `LICENSE.txt` for details.
 
 ---
 
-## 🌍 Links
+## 💬 Contributing
 
-- 📦 [RubyGems Page](https://rubygems.org/gems/gem_activity_tracker)
-- 🧠 [GitHub Repo](https://github.com/atul13055/gem_activity_tracker)
-
----
-
-## 🙌 Author
-
-Built with ❤️ by **Atul Yadav**  
-📧 [atuIyadav9039@gmail.com](mailto:atuIyadav9039@gmail.com)  
-🌐 [LinkedIn](https://www.linkedin.com/in/atul-yadav-9445ab1a4)
+Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.

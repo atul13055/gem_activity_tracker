@@ -8,21 +8,10 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: gem_activity_tracker [options]"
 
-  opts.on("-tPATH", "--track=PATH", "Track a Rails/Ruby project") do |path|
-    options[:track] = path
-  end
-
-  opts.on("-r", "--report", "Show last generated report") do
-    options[:report] = true
-  end
-
-  opts.on("-eFORMAT", "--export=FORMAT", "Export as json or csv") do |format|
-    options[:export] = format.to_sym
-  end
-
-  opts.on("-w", "--watch", "Start the file watcher") do
-    options[:watch] = true
-  end
+  opts.on("-tPATH", "--track=PATH", "Track a Rails/Ruby project") { |v| options[:track] = v }
+  opts.on("-r", "--report", "Show last generated report") { options[:report] = true }
+  opts.on("-eFORMAT", "--export=FORMAT", "Export as json or csv") { |v| options[:export] = v.to_sym }
+  opts.on("-w", "--watch", "Start the file watcher") { options[:watch] = true }
 end.parse!
 
 if options[:track]
