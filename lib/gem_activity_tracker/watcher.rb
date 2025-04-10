@@ -12,10 +12,7 @@ module GemActivityTracker
         FileUtils.mkdir_p(File.dirname(log_file))
 
         any_change = false
-
         changes.each do |type, files|
-          next if files.empty?
-
           files.each do |file|
             timestamp = Time.now.strftime("%Y-%m-%d %H:%M:%S")
             relative_path = file.sub("#{path}/", '')
@@ -26,10 +23,7 @@ module GemActivityTracker
           end
         end
 
-        if any_change
-          puts "🔄 Updating activity report..."
-          GemActivityTracker::Tracker.track(path)
-        end
+        GemActivityTracker::Tracker.track(path) if any_change
       end
 
       listener.start
