@@ -6,7 +6,7 @@ module GemActivityTracker
       Rails.application.config.after_initialize do
         # Delay the execution slightly to avoid blocking boot
         Thread.new do
-          sleep(2) # Give Rails a moment to fully start
+          sleep(3) # Give Rails a moment to fully start
 
           begin
             path = Rails.root.to_s
